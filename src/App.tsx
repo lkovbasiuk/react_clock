@@ -1,17 +1,18 @@
 import React from 'react';
 import './App.scss';
-
-function getRandomName(): string {
-  const value = Date.now().toString().slice(-4);
-
-  return `Clock-${value}`;
-}
+import { Clock } from './components/Clock';
 
 type State = {
   clockName: string;
   today: Date;
   hasClock: boolean;
 };
+
+function getRandomName(): string {
+  const value = Date.now().toString().slice(-4);
+
+  return `Clock-${value}`;
+}
 
 export class App extends React.Component<{}, State> {
   state: Readonly<State> = {
@@ -37,8 +38,13 @@ export class App extends React.Component<{}, State> {
   }
 
   componentWillUnmount(): void {
-    window.clearInterval(this.nameTimerId);
-    window.clearInterval(this.dateTimerId);
+    if (this.nameTimerId) {
+      window.clearInterval(this.nameTimerId);
+    }
+
+    if (this.dateTimerId) {
+      window.clearInterval(this.dateTimerId);
+    }
   }
 
   componentDidUpdate(): void {
@@ -60,17 +66,7 @@ export class App extends React.Component<{}, State> {
       <div className="App">
         <h1>React clock</h1>
 
-        {hasClock && (
-          <div className="Clock">
-            <strong className="Clock__name">{clockName}</strong>
-
-            {' time is '}
-
-            <span className="Clock__time">
-              {today.toUTCString().slice(-12, -4)}
-            </span>
-          </div>
-        )}
+        <Clock clockName={clockName} today={today} hasClock={hasClock} />
       </div>
     );
   }
